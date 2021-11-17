@@ -86,8 +86,9 @@ class UserController extends Controller
         }else{
             $arrayFilter = ['id' => $id];
         }
-
-        $affected = User::where($arrayFilter)->update($request->input('data',null));
+        $dataReq = $request->input('data',null);
+        $dataReq && isset($dataReq['password']) ? $dataReq['password'] = Hash::make($dataReq['password']): null;
+        $affected = User::where($arrayFilter)->update($dataReq);
         $response = $this->customResponse(false, User::find($id), $affected? 200 : 400,
             $affected.' '.$this::NAME_SUBJECT1.($affected?' Actualizado correctamente': ' No fue actualizado')
         );
@@ -104,7 +105,7 @@ class UserController extends Controller
                 $result.' '.$this::NAME_SUBJECT1.($result?' Eliminado correctamente': ' No fue Eliminado')
             );
         }else{
-            return response(['status' => 400, 'message' => 'No existe registro'])
+            return response(['status' => 400, 'message' => 'No existe registro'], 400)
                 ->header('Content-Type', 'application/json');
         }
     }
@@ -119,7 +120,7 @@ class UserController extends Controller
             'records' => $showData? $dataResult :
                 ['id' => $resultSet->id]
         ];
-        return response($dataResponse)
+        return response($dataResponse, $codeStatus==200? 200 : 400)
             ->header('Content-Type', 'application/json');
     }
 
