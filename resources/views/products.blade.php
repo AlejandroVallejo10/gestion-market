@@ -135,10 +135,10 @@
                     </template>
 
                     <template #cell(actions)="row">
-                      <b-button size="sm" @click="deleteUser(row.item.id)" variant="danger">
+                      <b-button size="sm" @click="deleteProduct(row.item.id)" variant="danger">
                         ${row.item.id} <i class="fa fa-trash"></i>
                       </b-button>
-                      <b-button size="sm" @click="updateUser(row.item)" variant="default">
+                      <b-button size="sm" @click="updateProduct(row.item)" variant="default">
                           <i class="fa fa-edit"></i>
                       </b-button>
                     </template>
@@ -200,15 +200,14 @@
             products: [],
           },
           methods:{
-            async updateUser(userObj){
-              const copyUserData = Object.assign({}, userObj);
-              delete copyUserData.created_at
-              delete copyUserData.updated_at
-              delete copyUserData.email_verified_at
-              delete copyUserData.id
-              console.log(userObj, copyUserData)
+            async updateProduct(productObj){
+              const copyProductData = Object.assign({}, productObj);
+              delete copyProductData.created_at
+              delete copyProductData.updated_at              
+              delete copyProductData.id
+              console.log(productObj, copyProductData)
               try {
-                let response = await axios.put("{{route('products.index')}}/" + userObj.id, {data: copyUserData}, {headers:{'Content-type': 'application/json'}})
+                let response = await axios.put("{{route('products.index')}}/" + productObj.id, {data: copyProductData}, {headers:{'Content-type': 'application/json'}})
                 this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
@@ -218,9 +217,9 @@
                   this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
               }
             },
-            async deleteUser(userId){
+            async deleteProduct(productId){
               try {
-                let response = await axios.delete("{{route('products.index')}}/" + userId, {}, {headers:{'Content-type': 'application/json'}})
+                let response = await axios.delete("{{route('products.index')}}/" + productId, {}, {headers:{'Content-type': 'application/json'}})
                 this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
