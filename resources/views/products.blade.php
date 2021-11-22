@@ -145,8 +145,8 @@
                   </b-table>
                 </b-card-text>
 
-                <b-button @click="getUsers" variant="primary">Refrescar datos</b-button>
-                <pre v-if="debug"><code>${users}</code></pre>
+                <b-button @click="getProducts" variant="primary">Refrescar datos</b-button>
+                <pre v-if="debug"><code>${products}</code></pre>
               </b-collapse>
             </b-card>
           </div>
@@ -188,13 +188,7 @@
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
-                    {'key' : 'email', 'label' : 'EMAIL', 'sortable' : true},
-                    {'key' : 'cedula', 'label' : 'CEDULA', 'sortable' : true},
-                    {'key' : 'birthday', 'label' : 'CUMPLEAÑOS', 'sortable' : true},
-                    {'key' : 'address', 'label' : 'DIRECCION', 'sortable' : true},
-                    {'key' : 'password', 'label' : 'CONTRASENA', 'sortable' : true},
-                    {'key' : 'created_at', 'label' : 'CREAD0', 'sortable' : true},
-                    {'key' : 'updated_at', 'label' : 'ACTUALIZADO', 'sortable' : true},
+                    {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true},
                 ],
             },
             infoModal: {
@@ -203,7 +197,7 @@
                 content: ''
             },
             debug: true,
-            users: [],
+            products: [],
           },
           methods:{
             async updateUser(userObj){
@@ -214,8 +208,8 @@
               delete copyUserData.id
               console.log(userObj, copyUserData)
               try {
-                let response = await axios.put("{{route('users.index')}}/" + userObj.id, {data: copyUserData}, {headers:{'Content-type': 'application/json'}})
-                this.getUsers()
+                let response = await axios.put("{{route('products.index')}}/" + userObj.id, {data: copyUserData}, {headers:{'Content-type': 'application/json'}})
+                this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
                 console.log(error.response.status)
@@ -226,8 +220,8 @@
             },
             async deleteUser(userId){
               try {
-                let response = await axios.delete("{{route('users.index')}}/" + userId, {}, {headers:{'Content-type': 'application/json'}})
-                this.getUsers()
+                let response = await axios.delete("{{route('products.index')}}/" + userId, {}, {headers:{'Content-type': 'application/json'}})
+                this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
                 console.log(error.response.status)
@@ -239,8 +233,8 @@
             async createProduct(){
               try {
 
-                let response = await axios.post("{{route('productos.store')}}", {data: this.newProduct}, {headers:{'Content-type': 'application/json'}})
-                this.getUsers()
+                let response = await axios.post("{{route('products.store')}}", {data: this.newProduct}, {headers:{'Content-type': 'application/json'}})
+                this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
                 console.log(error.response.status)
@@ -249,11 +243,11 @@
                   this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
               }
             },
-            async getUsers(){
-              let response = await axios.get("{{route('users.index')}}", {}, {headers:{'Content-type': 'application/json'}})
+            async getProducts(){
+              let response = await axios.get("{{route('products.index')}}", {}, {headers:{'Content-type': 'application/json'}})
               if(200 === response.status){
                 console.log(response.data.records)
-                this.users = response.data.records
+                this.products = response.data.records
                 console.log(response.data)
               }else{console.log(response.error)}
             },
@@ -269,15 +263,15 @@
           computed: {
             items(){
               return this.table.keyword
-                ? this.users.filter(
+                ? this.products.filter(
                   item => 
                     item.name.includes(this.table.keyword) || item.email.includes(this.table.keyword)
                 )
-                : this.users
+                : this.products
             },
           },
           created(){
-            this.getUsers()
+            this.getProducts()
           },
         })
       </script>
