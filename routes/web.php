@@ -21,9 +21,20 @@ Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');
 
+Route::get('/admin', function () {
+    return view('components.admin.dashboard');
+})->middleware(['auth'])->name('admin');
+
+Route::get('/stores', function () {
+    return view('components.admin.stores');
+})->middleware(['auth'])->name('stores');
+
+Route::get('/warehouses', function () {
+    return view('components.admin.warehouses');
+})->middleware(['auth'])->name('warehouses');
+
 Route::get('/productos', function () {
     return view('products');
 })->middleware(['auth'])->name('productos');
 
 require __DIR__.'/auth.php';
-require __DIR__.'/admin.php';
