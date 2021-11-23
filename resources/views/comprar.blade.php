@@ -1,7 +1,7 @@
 <x-admin>
   <x-slot name="imgHeader">{{asset('images/header.jpeg')}}</x-slot>
-  <x-slot name="titleHeader">Administrador</x-slot>
-  <x-slot name="parHeader">Market Gestion</x-slot>
+  <x-slot  name="titleHeader">Administrador</x-slot>
+  <x-slot  name="parHeader">Market Gestion</x-slot>
 
   <x-slot name="styleSheets">
   </x-slot>
@@ -94,7 +94,7 @@
                                     <tr v-for="item in products" :key="item.id">
                                         <td v-text="item.name"></td>
 
-                                        <td style="left: 80px;position: relative;">${ item.cantidad }</td>
+                                        <td style="left: 70px;position: relative;">${ item.precio }</td>
 
                                         <td style="left: 70px;position: relative;" @click="addProduct(item)"> <i style="cursor: pointer;" class="fas fa-cart-plus"></i></td>
                                     </tr>
@@ -112,14 +112,14 @@
 
                                   <div class="navbar-dropdown is-boxed is-right">
                                       <div v-for="(productSelect, index) in cartProducts">
-                                        ${productSelect.name}
-                                        <i @click="removeProduct(index)" class="fas fa-times-circle"></i>
+                                        ${productSelect.name}  ${ productSelect.precio }
+                                        <i @click="removeProduct(productSelect, index)" class="fas fa-times-circle"></i>
                                       </div>
 
 
                                       <hr class="navbar-divider">
   
-                                      <a class="navbar-item" href="">
+                                      <a type="button" @click="pagar()" class="navbar-item">
                                           Pagar
                                       </a>
                                   </div>
@@ -153,58 +153,6 @@
             dismissSecs: 10,
             dismissCountDown: 0,
             cartProducts: [],
-            itemsCart: [
-                {
-                    id: 1,
-                    title: 'Children of Bodom - Hatebreeder',
-                    price: 9.99
-                },
-                {
-                    id: 2,
-                    title: 'Emperor - Anthems to the Welkin at Dusk',
-                    price: 6.66
-                },
-                {
-                    id: 3,
-                    title: 'Epica - The Quantum Enigma',
-                    price: 15.99
-                },
-                {
-                    id: 4,
-                    title: 'Chthonic - Takasago Army',
-                    price: 14.00
-                },
-                {
-                    id: 5,
-                    title: 'Silencer - Death - Pierce Me',
-                    price: 1.20
-                },
-                {
-                    id: 6,
-                    title: 'My Dying Bride - 34.788%... Complete',
-                    price: 10.00
-                },
-                {
-                    id: 7,
-                    title: 'Shape of Despair - Shades of',
-                    price: 7.80
-                },
-                {
-                    id: 8,
-                    title: 'Ne Obliviscaris - Portal of I',
-                    price: 11.30
-                },
-                {
-                    id: 9,
-                    title: 'Protest the Hero - Fortress',
-                    price: 5.55
-                },
-                {
-                    id: 10,
-                    title: 'Dark Lunacy - Devoid',
-                    price: 6.00
-                },
-            ],
             newProduct: {
               name: 'Manzana', 
               cantidad: '1'
@@ -288,12 +236,36 @@
               }else{console.log(response.error)}
             },
             addProduct(item){
-              this.cartProducts.push(item);
-              console.log('tem', this.cartProducts)
+              if(this.cartProducts.includes(item)){
+                let ProductosActuales = this.cartProducts;
+                this.cartProducts.forEach(function(product, index) {
+                    console.log('product', item,  ProductosActuales);
+                    if (product == item) {
+                      if(ProductosActuales[index]['cantidad'] == 0){
+                        alert("El producto no tiene mas cantidades para agregar")
+                      }else{
+                        ProductosActuales[index]['cantidad'] = ProductosActuales[index]['cantidad'] - 1
+                        ProductosActuales[index]['precio'] = ProductosActuales[index]['precio'] * 2
+                        alert("Al agregar el mismo producto, se resta la cantidad y se multiplica el precio")
+                      }
+                    }
+                  });
+                  this.cartProducts = ProductosActuales;
+              }else{
+                item['cantidad'] = item['cantidad'] - 1
+                this.cartProducts.push(item);
+              }
             },
-            removeProduct(index){
-              this.cartProducts.splice(index, 1); // devuelve ['dos']
-              console.log('remove', index, this.cartProducts)
+            removeProduct(item, index){
+              item['cantidad'] = item['cantidad'] + 1
+              this.cartProducts.splice(index, 1);
+            },
+            pagar(){
+              let total = 0
+              this.cartProducts.forEach(function(product, index) {
+                total = total + product['precio']
+              });
+              console.log('product', total);
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown

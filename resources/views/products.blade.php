@@ -131,6 +131,9 @@
                       <input v-model="row.item.name" type="text" class="btn px-0">
                     </template>
                     <template #cell(cedula)="row">
+                      <input v-model="row.item.precio" type="number" class="btn px-0">
+                    </template>
+                    <template #cell(cedula)="row">
                       <input v-model="row.item.cantidad" type="number" class="btn px-0">
                     </template>
 
@@ -170,11 +173,13 @@
             dismissCountDown: 0,
             newProduct: {
               name: 'Manzana', 
-              cantidad: '1'
+              precio: 1000, 
+              cantidad: 1
             },
             form: {
               inputs: [
                 {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
+                {label: 'Precio', key: 'precio', colSize: '6', placeholder: '', type: 'number', required: true},
                 {label: 'Cantidad', key: 'cantidad', colSize: '6', placeholder: '', type: 'number', required: true}
               ]
             },
@@ -188,6 +193,7 @@
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
+                    {'key' : 'precio', 'label' : 'PRECIO', 'sortable' : true},
                     {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true},
                 ],
             },

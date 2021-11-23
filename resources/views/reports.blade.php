@@ -154,13 +154,10 @@
             alertColor: 'warning',
             dismissSecs: 10,
             dismissCountDown: 0,
-            newProduct: {
-              name: 'Manzana', 
-              cantidad: '1'
-            },
             form: {
               inputs: [
                 {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
+                {label: 'Precio', key: 'precio', colSize: '6', placeholder: '', type: 'number', required: true},
                 {label: 'Cantidad', key: 'cantidad', colSize: '6', placeholder: '', type: 'number', required: true}
               ]
             },
@@ -174,7 +171,8 @@
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
-                    {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true},
+                    {'key' : 'precio', 'label' : 'PRECIO', 'sortable' : true},
+                    {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true}
                 ],
             },
             infoModal: {
@@ -213,19 +211,6 @@
             async deleteProduct(productId){
               try {
                 let response = await axios.delete("{{route('products.index')}}/" + productId, {}, {headers:{'Content-type': 'application/json'}})
-                this.getProducts()
-                this.showAlert(response.data.message, 'success')
-              } catch(error) {
-                console.log(error.response.status)
-                400 === error.response.status ?
-                  this.showAlert(error.response.data.message, 'danger') :
-                  this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
-              }
-            },
-            async createProduct(){
-              try {
-
-                let response = await axios.post("{{route('products.store')}}", {data: this.newProduct}, {headers:{'Content-type': 'application/json'}})
                 this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
