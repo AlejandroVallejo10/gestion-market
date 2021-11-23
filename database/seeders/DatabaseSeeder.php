@@ -24,6 +24,12 @@ class DatabaseSeeder extends Seeder
             'password' => Hash::make('123'),
             'rol' => 2,
         ]);
+        DB::table('users')->insert([
+            'name' => 'Cliente',
+            'email' => 'clien@test.com',
+            'password' => Hash::make('123'),
+            'rol' => 1,
+        ]);
 
         $products = Product::factory()->count(3)->create();
         $products = Store::factory()->count(3)->create();

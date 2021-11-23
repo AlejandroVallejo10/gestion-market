@@ -31,6 +31,9 @@
                     <x-nav-link :href="route('reportes')" :active="request()->routeIs('reportes')">
                         {{ __('Reportes') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('comprar')" :active="request()->routeIs('comprar')">
+                        {{ __('Comprar') }}
+                    </x-nav-link>
                     @elseif (auth()->user()->rol == 1)
                     <x-nav-link :href="route('comprar')" :active="request()->routeIs('comprar')">
                         {{ __('Comprar') }}
