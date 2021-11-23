@@ -142,6 +142,9 @@
                     <template #cell(address)="row">
                       <input v-model="row.item.address" type="text" class="btn px-0">
                     </template>
+                    <template #cell(rol)="row">
+                      <input v-model="row.item.rol" type="number" class="btn px-0">
+                    </template>
                     <template #cell(password)="row">
                       <input v-model="row.item.password" type="password" class="btn px-0">
                     </template>
@@ -192,6 +195,7 @@
               inputs: [
                 {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
                 {label: 'Email', key: 'email', colSize: '6', placeholder: '', type: 'email', required: true},
+                {label: 'Rol', key: 'rol', colSize: '6', placeholder: '', type: 'number', required: true},
                 {label: 'Documento', key: 'cedula', colSize: '6', placeholder: '', type: 'number', required: true},
                 {label: 'Direccion', key: 'address', colSize: '6', placeholder: '', type: 'text', required: true},
                 {label: 'Telefono', key: 'phone', colSize: '6', placeholder: '', type: 'number', required: true},
@@ -209,6 +213,7 @@
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
+                    {'key' : 'rol', 'label' : 'ROL', 'sortable' : true},
                     {'key' : 'email', 'label' : 'EMAIL', 'sortable' : true},
                     {'key' : 'cedula', 'label' : 'CEDULA', 'sortable' : true},
                     {'key' : 'birthday', 'label' : 'CUMPLEAÑOS', 'sortable' : true},

@@ -57,10 +57,6 @@ class UserController extends Controller
 
     public function show($id,Request $request)
     {
-        if(Auth::check())
-            return Auth::user();
-        else
-            return 'logeado';
         $filter = $request->filter;
         if ($filter){
             $keysFilter = explode(',' , $filter);
