@@ -57,42 +57,6 @@
           </b-alert>
 
         </div>
-        <!-- nuevo -->
-        <div class="row">
-          <div class="col-12">
-            <form @submit.prevent="createProduct()" action="#">
-              <b-card
-              header-tag="header"
-              tag="article"
-              class="m-3"
-              >
-                <template #header>
-                  <h4 class="mb-0">
-                    <b-button v-b-toggle.collapse-1 class="btn btn-info mx-0" size="sm">
-                      <i class="fa fa-chevron-circle-down"></i>
-                    </b-button> Nuevo Producto
-                  </h4>
-                </template>
-                
-                <b-collapse id="collapse-1" class="mt-2">
-                  <b-card-text>
-                    <div class="row">
-                      <div v-for="i in form.inputs" :class="'col-12 col-md-'+i.colSize">
-                        <label>${i.label}</label>
-                        <b-form-input :required="i.required" :type="i.type" v-model="newProduct[i.key]" placeholder="Buscar" size="sm"></b-form-input><br>
-                      </div>
-                    </div>
-                  </b-card-text>
-                  
-                  <button class="btn btn-primary" type="submit">Crear</button>
-                  <pre v-if="debug"><code>${newProduct}</code></pre>
-                </b-collapse>
-              </b-card>
-            </form>
-            
-          </div>
-          
-        </div>
         <!-- tabla -->
         <div class="row">
           <div class="col-12">
@@ -105,7 +69,7 @@
                 <h4 class="mb-0">
                   <b-button v-b-toggle.collapse-2 class="btn btn-info mx-0" size="sm">
                     <i class="fa fa-chevron-circle-down"></i>
-                  </b-button> Tabla Productos
+                  </b-button> Reportes
                 </h4>
               </template>
               <b-collapse visible id="collapse-2" class="mt-2">
@@ -115,6 +79,15 @@
                     <div class="col-6">
                       <b-form-input v-model="table.keyword" placeholder="Buscar" size="sm"></b-form-input><br>
                     </div>
+                    <div class="col-6">
+                    <div id="app">
+                      <v-select
+                        :options="durationProduct" 
+                        label="title"
+                        @input="filterSelect"
+                      ></v-select>
+                    </div>
+                    
                   </div>
                   <b-table
                     responsive
@@ -129,9 +102,6 @@
                   >
                     <template #cell(name)="row">
                       <input v-model="row.item.name" type="text" class="btn px-0">
-                    </template>
-                    <template #cell(cedula)="row">
-                      <input v-model="row.item.precio" type="number" class="btn px-0">
                     </template>
                     <template #cell(cedula)="row">
                       <input v-model="row.item.cantidad" type="number" class="btn px-0">
@@ -162,20 +132,28 @@
 
   <x-slot name="scripts">
       <!-- vue app -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vue-select/3.10.0/vue-select.css" integrity="sha512-HLz+b0Pyj+6RnAjTwAajDUOJfhEIfdLy91cHSph3ydMYt3UN6kp7h+b2ofodXNflk4CNyZe9HP8YAj8hYBiNSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-select/3.10.0/vue-select.min.js" integrity="sha512-XxrWOXiVqA2tHMew1fpN3/0A7Nh07Fd5wrxGel3rJtRD9kJDJzJeSGpcAenGUtBt0RJiQFUClIj7/sKTO/v7TQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js" integrity="sha512-qTXRIMyZIFb8iQcfjXWCO8+M5Tbc38Qi5WzdPOYZHIlZpzBHG3L3by84BBBOiRGiEb7KKtAOAs5qYdUiZiQNNQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment-with-locales.min.js" integrity="sha512-LGXaggshOkD/at6PFNcp2V2unf9LzFq6LE+sChH7ceMTDP0g2kn6Vxwgg7wkPP7AAtX+lmPqPdxB47A0Nz0cMQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <script>
+        Vue.component("v-select", VueSelect.VueSelect);
         let appAdmin = new Vue({
           el: '#appAdmin',
           delimiters: ['${', '}'],
           data: {
+            durationProduct: [
+              { title: "Una semana" },
+              { title: "Dos semanas" },
+              { title: "Tres semanas" },
+              { title: "1 mes" }
+            ],
             alertMsg: 'Sin mensaje',
+            posts:'',
+            sort:'',
             alertColor: 'warning',
             dismissSecs: 10,
             dismissCountDown: 0,
-            newProduct: {
-              name: 'Manzana', 
-              precio: 1000, 
-              cantidad: 1
-            },
             form: {
               inputs: [
                 {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
@@ -194,7 +172,7 @@
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
                     {'key' : 'precio', 'label' : 'PRECIO', 'sortable' : true},
-                    {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true},
+                    {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true}
                 ],
             },
             infoModal: {
@@ -223,22 +201,16 @@
                   this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
               }
             },
+            loadPost(){
+                this.post=this.post
+            },
+            sortValue(){
+                axios.post('/filter',{ sort:this.sort })
+                .then(response => ( this.post=response.data.post ))
+            },
             async deleteProduct(productId){
               try {
                 let response = await axios.delete("{{route('products.index')}}/" + productId, {}, {headers:{'Content-type': 'application/json'}})
-                this.getProducts()
-                this.showAlert(response.data.message, 'success')
-              } catch(error) {
-                console.log(error.response.status)
-                400 === error.response.status ?
-                  this.showAlert(error.response.data.message, 'danger') :
-                  this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
-              }
-            },
-            async createProduct(){
-              try {
-
-                let response = await axios.post("{{route('products.store')}}", {data: this.newProduct}, {headers:{'Content-type': 'application/json'}})
                 this.getProducts()
                 this.showAlert(response.data.message, 'success')
               } catch(error) {
@@ -253,6 +225,71 @@
               if(200 === response.status){
                 console.log(response.data.records)
                 this.products = response.data.records
+                console.log(response.data)
+              }else{console.log(response.error)}
+            },
+            async filterSelect(event){
+              let response = await axios.get("{{route('products.index')}}", {}, {headers:{'Content-type': 'application/json'}})
+              if(200 === response.status){
+                this.products = response.data.records
+
+                switch (event.title) {
+                  case 'Una semana':
+                    //Declaraciones ejecutadas cuando el resultado de expresión coincide con el valor1
+  
+                    var result = response.data.records.filter(result => {
+                      var fechaInicio = new Date(result.created_at).getTime();
+                      var fechaFin    = new Date().getTime();
+                      var diff = fechaFin - fechaInicio;
+                      var fecha1 = moment(result.created_at);
+                      var fecha2 = moment();
+                      return fecha1.diff(fecha2, 'days') <= -7
+                    });
+                    this.products = result;
+                    
+                    break;
+                  case 'Dos semanas':
+                    var result = response.data.records.filter(result => {
+                      var fechaInicio = new Date(result.created_at).getTime();
+                      var fechaFin    = new Date().getTime();
+                      var diff = fechaFin - fechaInicio;
+                      var fecha1 = moment(result.created_at);
+                      var fecha2 = moment();
+                      return fecha1.diff(fecha2, 'days') <= -14
+                    });
+                    this.products = result;
+                    console.log('dos semana', event.title)
+                    //Declaraciones ejecutadas cuando el resultado de expresión coincide con el valor2
+                    break;
+                  case 'Tres semanas':
+                    var result = response.data.records.filter(result => {
+                      var fechaInicio = new Date(result.created_at).getTime();
+                      var fechaFin    = new Date().getTime();
+                      var diff = fechaFin - fechaInicio;
+                      var fecha1 = moment(result.created_at);
+                      var fecha2 = moment();
+                      return fecha1.diff(fecha2, 'days') <= -21
+                    });
+                    this.products = result;
+                    //Declaraciones ejecutadas cuando el resultado de expresión coincide con valorN
+                    break;
+                  case '1 mes':
+                    //Declaraciones ejecutadas cuando el resultado de expresión coincide con el valor2
+                    var result = response.data.records.filter(result => {
+                      var fechaInicio = new Date(result.created_at).getTime();
+                      var fechaFin    = new Date().getTime();
+                      var diff = fechaFin - fechaInicio;
+                      var fecha1 = moment(result.created_at);
+                      var fecha2 = moment();
+                      return fecha1.diff(fecha2, 'days') <= -28
+                    });
+                    this.products = result;
+                    break;
+                  default:
+                    this.products = response.data.records
+                    //Declaraciones ejecutadas cuando ninguno de los valores coincide con el valor de la expresión
+                    break;
+                }
                 console.log(response.data)
               }else{console.log(response.error)}
             },

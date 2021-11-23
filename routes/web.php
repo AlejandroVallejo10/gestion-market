@@ -37,4 +37,13 @@ Route::get('/productos', function () {
     return view('products');
 })->middleware(['auth'])->name('productos');
 
+Route::get('/reportes', function () {
+    return view('reports');
+})->middleware(['auth'])->name('reportes');
+
+Route::get('/comprar', function () {
+    return view('comprar');
+})->middleware(['auth'])->name('comprar');
+
+
 require __DIR__.'/auth.php';

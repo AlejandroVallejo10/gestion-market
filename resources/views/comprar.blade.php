@@ -1,7 +1,7 @@
 <x-admin>
   <x-slot name="imgHeader">{{asset('images/header.jpeg')}}</x-slot>
-  <x-slot name="titleHeader">Administrador</x-slot>
-  <x-slot name="parHeader">Market Gestion</x-slot>
+  <x-slot  name="titleHeader">Administrador</x-slot>
+  <x-slot  name="parHeader">Market Gestion</x-slot>
 
   <x-slot name="styleSheets">
   </x-slot>
@@ -57,42 +57,7 @@
           </b-alert>
 
         </div>
-        <!-- nuevo -->
-        <div class="row">
-          <div class="col-12">
-            <form @submit.prevent="createProduct()" action="#">
-              <b-card
-              header-tag="header"
-              tag="article"
-              class="m-3"
-              >
-                <template #header>
-                  <h4 class="mb-0">
-                    <b-button v-b-toggle.collapse-1 class="btn btn-info mx-0" size="sm">
-                      <i class="fa fa-chevron-circle-down"></i>
-                    </b-button> Nuevo Producto
-                  </h4>
-                </template>
-                
-                <b-collapse id="collapse-1" class="mt-2">
-                  <b-card-text>
-                    <div class="row">
-                      <div v-for="i in form.inputs" :class="'col-12 col-md-'+i.colSize">
-                        <label>${i.label}</label>
-                        <b-form-input :required="i.required" :type="i.type" v-model="newProduct[i.key]" placeholder="Buscar" size="sm"></b-form-input><br>
-                      </div>
-                    </div>
-                  </b-card-text>
-                  
-                  <button class="btn btn-primary" type="submit">Crear</button>
-                  <pre v-if="debug"><code>${newProduct}</code></pre>
-                </b-collapse>
-              </b-card>
-            </form>
-            
-          </div>
-          
-        </div>
+
         <!-- tabla -->
         <div class="row">
           <div class="col-12">
@@ -105,47 +70,63 @@
                 <h4 class="mb-0">
                   <b-button v-b-toggle.collapse-2 class="btn btn-info mx-0" size="sm">
                     <i class="fa fa-chevron-circle-down"></i>
-                  </b-button> Tabla Productos
+                  </b-button> Comprar Productos
                 </h4>
               </template>
               <b-collapse visible id="collapse-2" class="mt-2">
 
                 <b-card-text>
-                  <div class="row">
-                    <div class="col-6">
-                      <b-form-input v-model="table.keyword" placeholder="Buscar" size="sm"></b-form-input><br>
-                    </div>
-                  </div>
-                  <b-table
-                    responsive
-                    :items="items"
-                    :fields="table.fields"
-                    :sticky-header="table.stickyHeader"
-                    :stacked="table.tableStack"
-                    striped
-                    :per-page="0"
-                    :current-page="currentPage"
-                    :keyword="table.keyword"
-                  >
-                    <template #cell(name)="row">
-                      <input v-model="row.item.name" type="text" class="btn px-0">
-                    </template>
-                    <template #cell(cedula)="row">
-                      <input v-model="row.item.precio" type="number" class="btn px-0">
-                    </template>
-                    <template #cell(cedula)="row">
-                      <input v-model="row.item.cantidad" type="number" class="btn px-0">
-                    </template>
+                <nav class="navbar is-primary">
+                      <div class="navbar-brand">
+                          <a class="navbar-item" href="/">
+                              Carrito de compras
+                          </a>
 
-                    <template #cell(actions)="row">
-                      <b-button size="sm" @click="deleteProduct(row.item.id)" variant="danger">
-                        ${row.item.id} <i class="fa fa-trash"></i>
-                      </b-button>
-                      <b-button size="sm" @click="updateProduct(row.item)" variant="default">
-                          <i class="fa fa-edit"></i>
-                      </b-button>
-                    </template>
-                  </b-table>
+                          <div class="navbar-burger burger">
+                              <table>
+                                <thead>
+                                    <th>Nombre</th>
+                                    <th style="left: 70px;position: relative;">Precio</th>
+                                    <th></th>
+                                </thead>
+
+                                <tbody>
+                                    <tr v-for="item in products" :key="item.id">
+                                        <td v-text="item.name"></td>
+
+                                        <td style="left: 70px;position: relative;">${ item.precio }</td>
+
+                                        <td style="left: 70px;position: relative;" @click="addProduct(item)"> <i style="cursor: pointer;" class="fas fa-cart-plus"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                          </div>
+                      </div>
+
+                      <div class="navbar-menu"> 
+                          <div class="navbar-end">
+                              <div class="navbar-item has-dropdown is-hoverable">
+                                  <a class="navbar-link" href="">
+                                      Carrito (${cartProducts.length}) 
+                                  </a>
+
+                                  <div class="navbar-dropdown is-boxed is-right">
+                                      <div v-for="(productSelect, index) in cartProducts">
+                                        ${productSelect.name}  ${ productSelect.precio }
+                                        <i @click="removeProduct(productSelect, index)" class="fas fa-times-circle"></i>
+                                      </div>
+
+
+                                      <hr class="navbar-divider">
+  
+                                      <a type="button" @click="pagar()" class="navbar-item">
+                                          Pagar
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </nav>  
                 </b-card-text>
 
                 <b-button @click="getProducts" variant="primary">Refrescar datos</b-button>
@@ -171,15 +152,14 @@
             alertColor: 'warning',
             dismissSecs: 10,
             dismissCountDown: 0,
+            cartProducts: [],
             newProduct: {
               name: 'Manzana', 
-              precio: 1000, 
-              cantidad: 1
+              cantidad: '1'
             },
             form: {
               inputs: [
                 {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
-                {label: 'Precio', key: 'precio', colSize: '6', placeholder: '', type: 'number', required: true},
                 {label: 'Cantidad', key: 'cantidad', colSize: '6', placeholder: '', type: 'number', required: true}
               ]
             },
@@ -193,7 +173,6 @@
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
                     {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
-                    {'key' : 'precio', 'label' : 'PRECIO', 'sortable' : true},
                     {'key' : 'cantidad', 'label' : 'CANTIDAD', 'sortable' : true},
                 ],
             },
@@ -255,6 +234,38 @@
                 this.products = response.data.records
                 console.log(response.data)
               }else{console.log(response.error)}
+            },
+            addProduct(item){
+              if(this.cartProducts.includes(item)){
+                let ProductosActuales = this.cartProducts;
+                this.cartProducts.forEach(function(product, index) {
+                    console.log('product', item,  ProductosActuales);
+                    if (product == item) {
+                      if(ProductosActuales[index]['cantidad'] == 0){
+                        alert("El producto no tiene mas cantidades para agregar")
+                      }else{
+                        ProductosActuales[index]['cantidad'] = ProductosActuales[index]['cantidad'] - 1
+                        ProductosActuales[index]['precio'] = ProductosActuales[index]['precio'] * 2
+                        alert("Al agregar el mismo producto, se resta la cantidad y se multiplica el precio")
+                      }
+                    }
+                  });
+                  this.cartProducts = ProductosActuales;
+              }else{
+                item['cantidad'] = item['cantidad'] - 1
+                this.cartProducts.push(item);
+              }
+            },
+            removeProduct(item, index){
+              item['cantidad'] = item['cantidad'] + 1
+              this.cartProducts.splice(index, 1);
+            },
+            pagar(){
+              let total = 0
+              this.cartProducts.forEach(function(product, index) {
+                total = total + product['precio']
+              });
+              console.log('product', total);
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown
