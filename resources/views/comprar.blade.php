@@ -135,9 +135,6 @@
                       </div>
                   </nav>  
                 </b-card-text>
-
-                <b-button @click="getProducts" variant="primary">Refrescar datos</b-button>
-                <pre v-if="debug"><code>${products}</code></pre>
               </b-collapse>
             </b-card>
           </div>
@@ -194,17 +191,9 @@
                 content: ''
             },
             debug: true,
-            products: [],
+            products: []
           },
           methods:{
-            async getProducts(){
-              let response = await axios.get("{{route('products.store')}}", {}, {headers:{'Content-type': 'application/json'}})
-              if(200 === response.status){
-                console.log(response.data.records)
-                this.products = response.data.records
-                console.log(response.data)
-              }else{console.log(response.error)}
-            },
             async getStores(){
               let response = await axios.get("{{route('stores.index')}}", {}, {headers:{'Content-type': 'application/json'}})
               if(200 === response.status){
@@ -213,43 +202,53 @@
               }else{console.log(response.error)}
             },
             async getWarehouse(id){
-              let response = await axios.get("{{route('warehouses.store')}}/" + id, {}, {headers:{'Content-type': 'application/json'}})
+              let response = await axios.get("{{route('warehouses.index')}}?filter=store_id&valuefilter=" + id, {}, {headers:{'Content-type': 'application/json'}})
               if(200 === response.status){
                 this.warehouses = response.data.records
-                console.log(response.data, this.warehouses)
+                for (var productId of this.warehouses) {
+                    let response = await axios.get("{{route('products.index')}}?filter=id&valuefilter=" + productId['product_id'], {}, {headers:{'Content-type': 'application/json'}})
+                    console.log(response.data.records[0])
+                    if(response.data.records){
+                      response.data.records[0]['cantidad'] = productId['quantity']
+                      this.products.push(response.data.records[0])
+                    }
+                }
+                console.log(this.products)
               }else{console.log(response.error)}
             },
             addProduct(item){
               if(this.cartProducts.includes(item)){
                 let ProductosActuales = this.cartProducts;
-                this.cartProducts.forEach(function(product, index) {
+                for (var product of this.cartProducts) {
                     console.log('product', item,  ProductosActuales);
                     if (product == item) {
-                      if(ProductosActuales[index]['cantidad'] == 0){
+                      if(product['cantidad'] == 0){
                         alert("El producto no tiene mas cantidades para agregar")
                       }else{
-                        ProductosActuales[index]['cantidad'] = ProductosActuales[index]['cantidad'] - 1
-                        ProductosActuales[index]['precio'] = ProductosActuales[index]['precio'] * 2
-                        alert("Al agregar el mismo producto, se resta la cantidad y se multiplica el precio")
+                        product['cantidad'] = product['cantidad'] - 1
+                        product['precio'] = product['precio'] * 2
                       }
                     }
-                  });
+                  }
                   this.cartProducts = ProductosActuales;
               }else{
                 item['cantidad'] = item['cantidad'] - 1
                 this.cartProducts.push(item);
+                console.log(this.cartProducts)
               }
             },
-            removeProduct(item, index){
-              item['cantidad'] = item['cantidad'] + 1
+            async removeProduct(item, index){
+              let response = await axios.get("{{route('warehouses.index')}}?filter=product_id&valuefilter=" + item['id'], {}, {headers:{'Content-type': 'application/json'}})
+              console.log('response', response)
+              item['cantidad'] = response.data.records[0]['quantity']
               this.cartProducts.splice(index, 1);
             },
             pagar(){
               let total = 0
-              this.cartProducts.forEach(function(product, index) {
+              for (var product of this.cartProducts) {
                 total = total + product['precio']
-              });
-              console.log(this.cartProducts, total);
+              }
+              console.log(this.cartProducts, total, this.warehouses);
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown
