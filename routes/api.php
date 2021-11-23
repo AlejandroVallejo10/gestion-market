@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StoreController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\TransactionDetailController;
 use App\Http\Controllers\WarehouseController;
 
 /*
@@ -26,3 +28,5 @@ Route::resource('users', UserController::class);
 Route::resource('products', ProductController::class);
 Route::resource('stores', StoreController::class);
 Route::resource('warehouses', WarehouseController::class);
+Route::resource('transactions', TransactionController::class);
+Route::resource('transactionDetails', TransactionDetailController::class);
