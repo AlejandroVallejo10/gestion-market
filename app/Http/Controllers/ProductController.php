@@ -56,10 +56,6 @@ class ProductController extends Controller
 
     public function show($id,Request $request)
     {
-        if(Auth::check())
-            return Auth::product();
-        else
-            return 'logeado';
         $filter = $request->filter;
         if ($filter){
             $keysFilter = explode(',' , $filter);

@@ -22,6 +22,7 @@ class DatabaseSeeder extends Seeder
             'name' => 'Miguel Angel',
             'email' => 'miguel09acosta@gmail.com',
             'password' => Hash::make('123'),
+            'rol' => 2,
         ]);
 
         $products = Product::factory()->count(3)->create();

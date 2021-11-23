@@ -12,6 +12,7 @@
 
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
+                    @if (auth()->user()->rol == 2)
                     <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
@@ -30,9 +31,11 @@
                     <x-nav-link :href="route('reportes')" :active="request()->routeIs('reportes')">
                         {{ __('Reportes') }}
                     </x-nav-link>
+                    @elseif (auth()->user()->rol == 1)
                     <x-nav-link :href="route('comprar')" :active="request()->routeIs('comprar')">
                         {{ __('Comprar') }}
                     </x-nav-link>
+                    @endif
                 </div>
             </div>
 
