@@ -64,5 +64,19 @@ Route::get('/comprar', function () {
     return view('comprar');
 })->middleware(['auth'])->name('comprar');
 
+Route::get('/transactions', function () {
+    if (Auth::user()->rol == 1) {
+    return redirect()->route('comprar');
+}
+return view('components.admin.transactions');
+})->middleware(['auth'])->name('transactions');
+
+Route::get('/transactionDetails', function () {
+    if (Auth::user()->rol == 1) {
+    return redirect()->route('comprar');
+}
+return view('components.admin.transactionDetails');
+})->middleware(['auth'])->name('transactionDetails');
+
 
 require __DIR__.'/auth.php';

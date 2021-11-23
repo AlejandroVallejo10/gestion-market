@@ -243,12 +243,24 @@
               item['cantidad'] = response.data.records[0]['quantity']
               this.cartProducts.splice(index, 1);
             },
-            pagar(){
+            async pagar(){
               let total = 0
               for (var product of this.cartProducts) {
                 total = total + product['precio']
               }
-              console.log(this.cartProducts, total, this.warehouses);
+              let dataTransaction = {
+                total: total,fecha: '2021-11-23' ,user_id: '{{auth()->user()->id}}'
+              }
+              let responseTra = await axios.post("{{route('transactions.store')}}", {data: dataTransaction}, {headers:{'Content-type': 'application/json'}})
+              let responseDet
+              let idTransaction = responseTra.data.records.id
+              for (var product of this.cartProducts) {
+                let dataTransactionDetail = {
+                  transaction_id: idTransaction, product_id: product['id'], quantity: product['cantidad']
+                }
+                responseDet = await axios.post("{{route('transactionDetails.store')}}", {data: dataTransactionDetail}, {headers:{'Content-type': 'application/json'}})
+              }
+              console.log(responseTra, responseDet, this.cartProducts, total, this.warehouses);
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown
