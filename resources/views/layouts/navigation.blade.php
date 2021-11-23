@@ -26,6 +26,7 @@
                     </x-nav-link>
                     <x-nav-link :href="route('warehouses')" :active="request()->routeIs('warehouses')">
                         {{ __('Almacen') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('reportes')" :active="request()->routeIs('reportes')">
                         {{ __('Reportes') }}
                     </x-nav-link>

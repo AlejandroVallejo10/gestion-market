@@ -265,7 +265,7 @@
               this.cartProducts.forEach(function(product, index) {
                 total = total + product['precio']
               });
-              console.log('product', total);
+              console.log(this.cartProducts, total);
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown
