@@ -78,6 +78,13 @@
                 <b-card-text>
                 <nav class="navbar is-primary">
                       <div class="navbar-brand">
+                          <h5>Sucursales</h5>
+                          <v-select
+                          style="top: -30px;"
+                            :options="stores" 
+                            label="admin"
+                            @input="storeSelect"
+                          ></v-select>
                           <a class="navbar-item" href="/">
                               Carrito de compras
                           </a>
@@ -143,7 +150,10 @@
 
   <x-slot name="scripts">
       <!-- vue app -->
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/vue-select/3.10.0/vue-select.css" integrity="sha512-HLz+b0Pyj+6RnAjTwAajDUOJfhEIfdLy91cHSph3ydMYt3UN6kp7h+b2ofodXNflk4CNyZe9HP8YAj8hYBiNSA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/vue-select/3.10.0/vue-select.min.js" integrity="sha512-XxrWOXiVqA2tHMew1fpN3/0A7Nh07Fd5wrxGel3rJtRD9kJDJzJeSGpcAenGUtBt0RJiQFUClIj7/sKTO/v7TQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
       <script>
+        Vue.component("v-select", VueSelect.VueSelect);
         let appAdmin = new Vue({
           el: '#appAdmin',
           delimiters: ['${', '}'],
@@ -152,6 +162,8 @@
             alertColor: 'warning',
             dismissSecs: 10,
             dismissCountDown: 0,
+            stores: [],
+            warehouses: [],
             cartProducts: [],
             newProduct: {
               name: 'Manzana', 
@@ -185,54 +197,26 @@
             products: [],
           },
           methods:{
-            async updateProduct(productObj){
-              const copyProductData = Object.assign({}, productObj);
-              delete copyProductData.created_at
-              delete copyProductData.updated_at              
-              delete copyProductData.id
-              console.log(productObj, copyProductData)
-              try {
-                let response = await axios.put("{{route('products.index')}}/" + productObj.id, {data: copyProductData}, {headers:{'Content-type': 'application/json'}})
-                this.getProducts()
-                this.showAlert(response.data.message, 'success')
-              } catch(error) {
-                console.log(error.response.status)
-                400 === error.response.status ?
-                  this.showAlert(error.response.data.message, 'danger') :
-                  this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
-              }
-            },
-            async deleteProduct(productId){
-              try {
-                let response = await axios.delete("{{route('products.index')}}/" + productId, {}, {headers:{'Content-type': 'application/json'}})
-                this.getProducts()
-                this.showAlert(response.data.message, 'success')
-              } catch(error) {
-                console.log(error.response.status)
-                400 === error.response.status ?
-                  this.showAlert(error.response.data.message, 'danger') :
-                  this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
-              }
-            },
-            async createProduct(){
-              try {
-
-                let response = await axios.post("{{route('products.store')}}", {data: this.newProduct}, {headers:{'Content-type': 'application/json'}})
-                this.getProducts()
-                this.showAlert(response.data.message, 'success')
-              } catch(error) {
-                console.log(error.response.status)
-                400 === error.response.status ?
-                  this.showAlert(error.response.data.message, 'danger') :
-                  this.showAlert('Upss algo salió mal, comunicate con el administrador', 'danger')
-              }
-            },
             async getProducts(){
-              let response = await axios.get("{{route('products.index')}}", {}, {headers:{'Content-type': 'application/json'}})
+              let response = await axios.get("{{route('products.store')}}", {}, {headers:{'Content-type': 'application/json'}})
               if(200 === response.status){
                 console.log(response.data.records)
                 this.products = response.data.records
                 console.log(response.data)
+              }else{console.log(response.error)}
+            },
+            async getStores(){
+              let response = await axios.get("{{route('stores.index')}}", {}, {headers:{'Content-type': 'application/json'}})
+              if(200 === response.status){
+                this.stores = response.data.records
+                console.log(response.data)
+              }else{console.log(response.error)}
+            },
+            async getWarehouse(id){
+              let response = await axios.get("{{route('warehouses.store')}}/" + id, {}, {headers:{'Content-type': 'application/json'}})
+              if(200 === response.status){
+                this.warehouses = response.data.records
+                console.log(response.data, this.warehouses)
               }else{console.log(response.error)}
             },
             addProduct(item){
@@ -275,6 +259,10 @@
               this.alertMsg = msg
               this.dismissCountDown = this.dismissSecs
             },
+            storeSelect(event) {
+              console.log(event, 'event')
+              this.getWarehouse(event['id']);
+            }
           },
           computed: {
             items(){
@@ -287,7 +275,7 @@
             },
           },
           created(){
-            this.getProducts()
+            this.getStores()
           },
         })
       </script>
