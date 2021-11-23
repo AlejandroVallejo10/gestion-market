@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class AddToUsersTable2 extends Migration
+class CreateStoresTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,8 +13,12 @@ class AddToUsersTable2 extends Migration
      */
     public function up()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
+        Schema::create('stores', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
+            $table->string('name')->nullable();
+            $table->string('admin');
+            $table->string('phone')->nullable();
         });
     }
 
@@ -25,8 +29,6 @@ class AddToUsersTable2 extends Migration
      */
     public function down()
     {
-        Schema::table('users', function (Blueprint $table) {
-            //
-        });
+        Schema::dropIfExists('stores');
     }
 }

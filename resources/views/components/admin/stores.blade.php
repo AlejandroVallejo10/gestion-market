@@ -127,6 +127,9 @@
                     :current-page="currentPage"
                     :keyword="table.keyword"
                   >
+                    <template #cell(name)="row">
+                      <input v-model="row.item.name" type="text" class="btn px-0">
+                    </template>
                     <template #cell(admin)="row">
                       <input v-model="row.item.admin" type="text" class="btn px-0">
                     </template>
@@ -174,7 +177,8 @@
             },
             form: {
               inputs: [
-                {label: 'Nombre Administrador', key: 'admin', colSize: '6', placeholder: '', type: 'text', required: true},
+                {label: 'Nombre', key: 'name', colSize: '6', placeholder: '', type: 'text', required: true},
+                {label: 'Administrador', key: 'admin', colSize: '6', placeholder: '', type: 'text', required: true},
                 {label: 'Telefono', key: 'phone', colSize: '6', placeholder: '', type: 'number', required: true},
               ]
             },
@@ -187,7 +191,8 @@
                 keyword: '',
                 fields: [
                     {'key' : 'actions', 'label' : 'ACCIONES'},
-                    {'key' : 'admin', 'label' : 'NOMBRE TIENDA', 'sortable' : true},
+                    {'key' : 'name', 'label' : 'NOMBRE', 'sortable' : true},
+                    {'key' : 'admin', 'label' : 'ADMIN', 'sortable' : true},
                     {'key' : 'phone', 'label' : 'TELEFONO', 'sortable' : true},
                     {'key' : 'created_at', 'label' : 'CREAD0', 'sortable' : true},
                     {'key' : 'updated_at', 'label' : 'ACTUALIZADO', 'sortable' : true},
