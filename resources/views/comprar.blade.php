@@ -57,42 +57,7 @@
           </b-alert>
 
         </div>
-        <!-- nuevo -->
-        <div class="row">
-          <div class="col-12">
-            <form @submit.prevent="createProduct()" action="#">
-              <b-card
-              header-tag="header"
-              tag="article"
-              class="m-3"
-              >
-                <template #header>
-                  <h4 class="mb-0">
-                    <b-button v-b-toggle.collapse-1 class="btn btn-info mx-0" size="sm">
-                      <i class="fa fa-chevron-circle-down"></i>
-                    </b-button> Nuevo Producto
-                  </h4>
-                </template>
-                
-                <b-collapse id="collapse-1" class="mt-2">
-                  <b-card-text>
-                    <div class="row">
-                      <div v-for="i in form.inputs" :class="'col-12 col-md-'+i.colSize">
-                        <label>${i.label}</label>
-                        <b-form-input :required="i.required" :type="i.type" v-model="newProduct[i.key]" placeholder="Buscar" size="sm"></b-form-input><br>
-                      </div>
-                    </div>
-                  </b-card-text>
-                  
-                  <button class="btn btn-primary" type="submit">Crear</button>
-                  <pre v-if="debug"><code>${newProduct}</code></pre>
-                </b-collapse>
-              </b-card>
-            </form>
-            
-          </div>
-          
-        </div>
+
         <!-- tabla -->
         <div class="row">
           <div class="col-12">
@@ -105,44 +70,63 @@
                 <h4 class="mb-0">
                   <b-button v-b-toggle.collapse-2 class="btn btn-info mx-0" size="sm">
                     <i class="fa fa-chevron-circle-down"></i>
-                  </b-button> Tabla Productos
+                  </b-button> Comprar Productos
                 </h4>
               </template>
               <b-collapse visible id="collapse-2" class="mt-2">
 
                 <b-card-text>
-                  <div class="row">
-                    <div class="col-6">
-                      <b-form-input v-model="table.keyword" placeholder="Buscar" size="sm"></b-form-input><br>
-                    </div>
-                  </div>
-                  <b-table
-                    responsive
-                    :items="items"
-                    :fields="table.fields"
-                    :sticky-header="table.stickyHeader"
-                    :stacked="table.tableStack"
-                    striped
-                    :per-page="0"
-                    :current-page="currentPage"
-                    :keyword="table.keyword"
-                  >
-                    <template #cell(name)="row">
-                      <input v-model="row.item.name" type="text" class="btn px-0">
-                    </template>
-                    <template #cell(cedula)="row">
-                      <input v-model="row.item.cantidad" type="number" class="btn px-0">
-                    </template>
+                <nav class="navbar is-primary">
+                      <div class="navbar-brand">
+                          <a class="navbar-item" href="/">
+                              Carrito de compras
+                          </a>
 
-                    <template #cell(actions)="row">
-                      <b-button size="sm" @click="deleteProduct(row.item.id)" variant="danger">
-                        ${row.item.id} <i class="fa fa-trash"></i>
-                      </b-button>
-                      <b-button size="sm" @click="updateProduct(row.item)" variant="default">
-                          <i class="fa fa-edit"></i>
-                      </b-button>
-                    </template>
-                  </b-table>
+                          <div class="navbar-burger burger">
+                              <table>
+                                <thead>
+                                    <th>Nombre</th>
+                                    <th style="left: 70px;position: relative;">Precio</th>
+                                    <th></th>
+                                </thead>
+
+                                <tbody>
+                                    <tr v-for="item in products" :key="item.id">
+                                        <td v-text="item.name"></td>
+
+                                        <td style="left: 80px;position: relative;">${ item.cantidad }</td>
+
+                                        <td style="left: 70px;position: relative;" @click="addProduct(item)"> <i style="cursor: pointer;" class="fas fa-cart-plus"></i></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                          </div>
+                      </div>
+
+                      <div class="navbar-menu"> 
+                          <div class="navbar-end">
+                              <div class="navbar-item has-dropdown is-hoverable">
+                                  <a class="navbar-link" href="">
+                                      Carrito (${cartProducts.length}) 
+                                  </a>
+
+                                  <div class="navbar-dropdown is-boxed is-right">
+                                      <div v-for="(productSelect, index) in cartProducts">
+                                        ${productSelect.name}
+                                        <i @click="removeProduct(index)" class="fas fa-times-circle"></i>
+                                      </div>
+
+
+                                      <hr class="navbar-divider">
+  
+                                      <a class="navbar-item" href="">
+                                          Pagar
+                                      </a>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </nav>  
                 </b-card-text>
 
                 <b-button @click="getProducts" variant="primary">Refrescar datos</b-button>
@@ -168,6 +152,59 @@
             alertColor: 'warning',
             dismissSecs: 10,
             dismissCountDown: 0,
+            cartProducts: [],
+            itemsCart: [
+                {
+                    id: 1,
+                    title: 'Children of Bodom - Hatebreeder',
+                    price: 9.99
+                },
+                {
+                    id: 2,
+                    title: 'Emperor - Anthems to the Welkin at Dusk',
+                    price: 6.66
+                },
+                {
+                    id: 3,
+                    title: 'Epica - The Quantum Enigma',
+                    price: 15.99
+                },
+                {
+                    id: 4,
+                    title: 'Chthonic - Takasago Army',
+                    price: 14.00
+                },
+                {
+                    id: 5,
+                    title: 'Silencer - Death - Pierce Me',
+                    price: 1.20
+                },
+                {
+                    id: 6,
+                    title: 'My Dying Bride - 34.788%... Complete',
+                    price: 10.00
+                },
+                {
+                    id: 7,
+                    title: 'Shape of Despair - Shades of',
+                    price: 7.80
+                },
+                {
+                    id: 8,
+                    title: 'Ne Obliviscaris - Portal of I',
+                    price: 11.30
+                },
+                {
+                    id: 9,
+                    title: 'Protest the Hero - Fortress',
+                    price: 5.55
+                },
+                {
+                    id: 10,
+                    title: 'Dark Lunacy - Devoid',
+                    price: 6.00
+                },
+            ],
             newProduct: {
               name: 'Manzana', 
               cantidad: '1'
@@ -249,6 +286,14 @@
                 this.products = response.data.records
                 console.log(response.data)
               }else{console.log(response.error)}
+            },
+            addProduct(item){
+              this.cartProducts.push(item);
+              console.log('tem', this.cartProducts)
+            },
+            removeProduct(index){
+              this.cartProducts.splice(index, 1); // devuelve ['dos']
+              console.log('remove', index, this.cartProducts)
             },
             countDownChanged(dismissCountDown) {
               this.dismissCountDown = dismissCountDown
