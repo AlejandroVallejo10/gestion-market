@@ -78,5 +78,9 @@ Route::get('/transactionDetails', function () {
 return view('components.admin.transactionDetails');
 })->middleware(['auth'])->name('transactionDetails');
 
+Route::get('/platform', function () {
+    return view('components.admin.platform');
+})->middleware(['auth'])->name('platform');
+
 
 require __DIR__.'/auth.php';

@@ -13,7 +13,10 @@
                 <!-- Navigation Links -->
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @if (auth()->user()->rol == 2)
-                    <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
+                    <x-nav-link :href="route('platform')" :active="request()->routeIs('platform')">
+                        {{ __('Platform') }}
+                    </x-nav-link>
+                   {{--  <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
                     <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
@@ -39,7 +42,7 @@
                     </x-nav-link>
                     <x-nav-link :href="route('transactionDetails')" :active="request()->routeIs('transactionDetails')">
                         {{ __('Det Venta') }}
-                    </x-nav-link>
+                    </x-nav-link> --}}
                     @elseif (auth()->user()->rol == 1)
                     <x-nav-link :href="route('comprar')" :active="request()->routeIs('comprar')">
                         {{ __('Comprar') }}
