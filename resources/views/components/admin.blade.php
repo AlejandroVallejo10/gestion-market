@@ -27,10 +27,10 @@
             <!-- Page Heading -->
             <header onclick="appAdmin.showSidebar = false" class="bg-white shadow">
                 <div class="bg-cover bg-center d-flex flex-row-reverse  h-auto text-white py-24 px-10 object-fill self-end" style="background-image: url({{ $imgHeader }})">
-                    <div class="relative md:w-2/3 z-50"><br><br>
+                    {{-- <div class="relative md:w-2/3 z-50"><br><br>
                         <p class="absolute bottom-4 px-1 text-md text-default font-bold bg-secondary rounded-sm shadow-xl overflow-hidden md:max-w-xs">{{ $titleHeader }}</p>
                         <p class="absolute bottom-5 p-2 text-3xl font-bold bg-primary rounded-xs shadow-xl overflow-hidden md:max-w-sm">{{ $parHeader }}</p>
-                    </div>
+                    </div> --}}
                  </div>
             </header>
 

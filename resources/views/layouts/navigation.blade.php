@@ -14,7 +14,7 @@
                 <div class="hidden space-x-8 sm:-my-px sm:ml-10 sm:flex">
                     @if (auth()->user()->rol == 2)
                     <x-nav-link :href="route('platform')" :active="request()->routeIs('platform')">
-                        {{ __('Platform') }}
+                        {{ __('Bookaholic') }}
                     </x-nav-link>
                    {{--  <x-nav-link :href="route('admin')" :active="request()->routeIs('admin')">
                         {{ __('Dashboard') }}
